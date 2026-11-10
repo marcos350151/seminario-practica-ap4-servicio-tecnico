@@ -1,77 +1,61 @@
-# Sistema de Gestión de Servicio Técnico - AP4
-**Seminario de Práctica | Licenciatura en Informática | Universidad Siglo 21 | Noviembre 2026**  
-**Alumno: Marcos Waigel**
-
-## Proyecto integrador
-Esta versión **continúa** las entregas AP1, AP2 y AP3: mismo caso, mismo esquema relacional y mismo circuito de órdenes. Integra el **patrón DAO** (`OrdenDAO`, `ClienteDAO`, `TecnicoDAO`, `ProcesoDAO`) y explicita un contrato `OrdenRepositorio` para las consultas de órdenes.
-
-La entrega incluye clases abstractas (`Persona`), herencia, polimorfismo, excepciones, JDBC, transacciones MySQL, arreglos (`EstadoOrden[]` e `int[]`) y `ArrayList<OrdenServicio>` para registros de tamaño variable. Las opciones 15 a 17 son nuevas: reporte por estados, exportación y vista previa CSV. Los archivos CSV son exportaciones complementarias; la persistencia transaccional continúa en MySQL.
-
-## Estructura
-- `src/`: todos los archivos Java heredados de AP3 + clases nuevas.
-- `sql/schema.sql`: creación completa de BD (solo instalación inicial).
-- `sql/ap2_migracion.sql`: migración histórica (solo una vez).
-- `sql/datos_demo.sql`: técnico y repuesto de prueba.
-- `sql/verificacion_ap4.sql`: consultas de comprobación, sin modificaciones.
-- `docs/`: diagramas originales y nuevos de arquitectura/secuencia.
-- `evidencias/`: compilación, pruebas unitarias y prueba de menú reales.
-- `Guion_video_AP4.txt`: libreto de presentación de tres minutos.
-
-## 1) Compilar en Windows
-Abrí CMD en la carpeta principal del proyecto:
-
+Sistema de Gestión de Servicio Técnico de Equipos Informáticos
+Proyecto integrador de Seminario de Práctica — Licenciatura en Informática, Universidad Siglo 21.
+Autor: Marcos Waigel  
+Versión: AP4 — 2026  
+Tecnologías: Java, JDBC y MySQL 8
+Descripción
+Aplicación Java de consola para gestionar clientes, equipos informáticos y órdenes de servicio técnico. Permite registrar la recepción de equipos, diagnósticos, presupuestos, decisiones, reparaciones, repuestos y entregas. También ofrece consultas, filtrado de órdenes, reportes agrupados por estado y exportación e importación de reportes CSV.
+El desarrollo corresponde a la cuarta iteración de un prototipo académico. Mantiene el esquema de base de datos y el flujo operativo de las etapas anteriores.
+Arquitectura
+Se aplica el patrón DAO (Data Access Object) para separar la lógica de consulta y persistencia del modelo de dominio y de la interfaz por consola.
+`Main`: interacción con el operador mediante menú de consola.
+`Persona`, `Cliente`, `Tecnico`, `Equipo`, `OrdenServicio`: entidades del dominio.
+`OrdenRepositorio`: interfaz de acceso a órdenes.
+`ClienteDAO`, `TecnicoDAO`, `OrdenDAO`, `ProcesoDAO`: consultas y operaciones de persistencia mediante JDBC.
+`Database`: configuración de conexiones a MySQL.
+`ReporteOrdenes`: generación de reportes utilizando arreglos y `ArrayList`.
+`ArchivoOrdenesCsv`: lectura y escritura de archivos CSV.
+Las operaciones de varias sentencias utilizan transacciones y control de excepciones. Las consultas parametrizadas utilizan `PreparedStatement`.
+Estructura del repositorio
+```text
+src/                  Código fuente Java
+sql/                  Esquema, migración, datos y consultas SQL
+docs/                 Diagramas de arquitectura, clases y secuencia
+evidencias/           Resultados de compilación y pruebas
+lib/                  Indicaciones sobre el controlador JDBC
+01_compilar_y_probar.bat
+02_ejecutar_con_mysql.bat
+```
+Requisitos
+JDK 17 o superior.
+MySQL Server 8.x.
+MySQL Connector/J compatible, ubicado en `lib/mysql-connector-j.jar`.
+Compilación y pruebas
+Desde la raíz del proyecto, en Windows CMD:
 ```bat
 javac -encoding UTF-8 -d out src\*.java
 java -cp out PruebasPOO
 java -cp out PruebasAP4
 ```
-
-Ambas pruebas **no necesitan servidor MySQL**. Se verificó la compilación con OpenJDK 21 y se ejecutaron las pruebas de POO (8/8) y AP4 (11/11).
-
-## 2) Preparar MySQL (para probar conexión, consultas y actualizaciones)
-1. Abrí MySQL Workbench y conectate a tu MySQL 8.x.
-2. Si **ya existe** la BD AP2/AP3, **no ejecutes de nuevo schema.sql ni ap2_migracion.sql**; conservá todos tus registros.
-3. Si es una instalación nueva, ejecutá `sql/schema.sql` y luego `sql/ap2_migracion.sql` **una sola vez**.
-4. Ejecutá `sql/datos_demo.sql` para contar con un técnico y un repuesto de muestra (evita crear esos datos de nuevo).
-5. Colocá el **MySQL Connector/J** oficial en `lib/mysql-connector-j.jar` (ese JAR no viene incluido en el ZIP).
-6. En CMD ejecutá, reemplazando `USUARIO` y `CLAVE`:
-
+Las pruebas de clases y reportes se ejecutan sin conexión a la base de datos. Los resultados registrados se encuentran en `evidencias/`.
+Base de datos
+Para una instalación nueva, ejecutar en MySQL Workbench los scripts `sql/schema.sql` y luego `sql/ap2_migracion.sql`. Los scripts iniciales no deben repetirse sobre una base ya migrada. `sql/datos_demo.sql` contiene registros de ejemplo.
+Configurar las variables de entorno para la ejecución local:
 ```bat
 set ST_DB_URL=jdbc:mysql://localhost:3306/servicio_tecnico?useSSL=false&serverTimezone=UTC
-set ST_DB_USER=USUARIO
-set ST_DB_PASS=CLAVE
-javac -encoding UTF-8 -d out src\*.java
+set ST_DB_USER=usuario_local
+set ST_DB_PASS=clave_local
 java -cp "out;lib/mysql-connector-j.jar" Main
 ```
-
-Si tu MySQL local no tiene TLS, la URL de arriba es solo para un laboratorio local. No uses esas opciones para conexiones expuestas a redes no confiables.
-
-## 3) Recorrido funcional y evidencia a capturar
-1. Opción 1: registrar cliente.
-2. Opción 3: ingresar equipo y orden (estado RECIBIDO).
-3. Opción 4: listar órdenes (SELECT / JDBC).
-4. Consultá IDs de técnico de la opción 12; opción 5 diagnosticar.
-5. Opción 6 presupuestar; opción 7 aceptar (S); opción 8 finalizar reparación.
-6. Opción 9 usar repuesto (comprobá stock); opción 10 entregar.
-7. Opción 13 buscar ID; 14 filtrar; 15 reporte por estado (arreglo + ArrayList).
-8. Opción 16 exportar CSV, opción 17 leer CSV; revisá `exportaciones/ordenes_ap4.csv`.
-9. En Workbench ejecutá `sql/verificacion_ap4.sql`, verificá estados/historial/repuestos.
-
-**Capturá pantallas de cada operación**, especialmente la consulta y la actualización en MySQL; esta verificación debe realizarse en tu PC. Las pruebas de integración con MySQL de la versión AP4 están pendientes de verificación en una instalación local.
-
-## 4) Manejo de errores
-- `SQLException`: conexión, sentencias SQL y transacciones fallidas.
-- `IOException`: fallas de lectura y escritura CSV.
-- `IllegalArgumentException`: argumentos, tipos y transiciones inválidas.
-- `IllegalStateException`: precondiciones y uso no permitido de operaciones.
-- `rollback` y `PreparedStatement` en las operaciones de negocio.
-
-## 5) Video y entrega
-El video de **aproximadamente tres minutos** debe grabarse mostrando la ejecución local, los diagramas y al menos una consulta y una actualización MySQL. Usá `Guion_video_AP4.txt` como guía.
-
-La consigna pide publicar la versión completa en GitHub. **El repositorio AP4 todavía no está publicado**. Podés crear `seminario-practica-ap4-servicio-tecnico` y subir todos sus archivos (sin credenciales ni datos personales); después insertá su enlace real en el informe antes de entregar.
-
-Antecedente AP3: https://github.com/marcos350151/seminario-practica-ap3-servicio-tecnico
-
-## Alcance y limitaciones
-Prototipo académico con interfaz por consola. No implementa login real, permisos de aplicación, interfaz gráfica, copias de seguridad programadas ni pruebas de aceptación por usuarios. No incluir claves de BD ni el JAR de Connector/J en repositorios públicos. Los datos de ejemplo son ficticios.
+La configuración mostrada corresponde a un entorno de desarrollo local. En entornos remotos corresponde habilitar TLS y validar certificados.
+La verificación del estado de las órdenes, presupuestos, reparaciones y repuestos puede efectuarse con `sql/verificacion_ap4.sql`.
+Funcionalidades adicionales AP4
+Opción 15: reporte por estado de las órdenes.
+Opción 16: exportación de órdenes a CSV.
+Opción 17: lectura de reportes CSV.
+La base de datos MySQL es la fuente principal de persistencia; el CSV funciona como exportación complementaria.
+Verificación y alcance
+Se dispone de resultados de compilación Java y de pruebas automatizadas de dominio y reportes. La integración completa con MySQL requiere una ejecución local con el controlador JDBC y un servidor configurado.
+El sistema es un prototipo académico. No incluye autenticación de usuarios, interfaz gráfica ni funcionalidades de producción como auditoría centralizada y copias de seguridad automáticas.
+Antecedentes
+AP3: https://github.com/marcos350151/seminario-practica-ap3-servicio-tecnico
