@@ -1,0 +1,12 @@
+OK: ArrayList expl?cito en servicio
+OK: Conteo por estado en arreglo
+OK: Conteo de otro estado
+OK: Total de ?rdenes
+OK: Consulta mediante interfaz
+OK: Filtro mediante interfaz
+OK: Exportaci?n CSV UTF-8
+OK: Lectura CSV
+OK: CSV con encabezado y tres ?rdenes
+OK: Dependencia obligatoria
+OK: Validaci?n de cantidad positiva
+RESULTADO: 11/11 verificaciones aprobadas.

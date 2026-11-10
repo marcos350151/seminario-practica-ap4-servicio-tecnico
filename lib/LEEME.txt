@@ -1,0 +1,2 @@
+Colocar aquí MySQL Connector/J, renombrado como mysql-connector-j.jar.
+El JAR oficial debe obtenerse del proveedor; no viene incluido. No subir contraseñas.
